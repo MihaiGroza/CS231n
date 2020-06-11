@@ -57,8 +57,13 @@ class TwoLayerNet(object):
         
         
         
-        
-        
+        self.params['W1'] = np.random.normal(0,weight_scale,(hidden_dim,input_dim))
+        self.params['b1'] = np.zeros(hidden_dim)
+
+        self.params['W2'] = np.random.normal(0,weight_scale,(num_classes,hidden_dim))
+        self.params['b2'] = np.zeros(num_classes)
+
+
         
         
         
@@ -96,6 +101,19 @@ class TwoLayerNet(object):
         # class scores for X and storing them in the scores variable.              #
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        
+        W1 = self.params['W1']
+        W2 = self.params['W2']
+        b1 = self.params['b1']
+        b2 = self.params['b2']
+        
+        
+        mid, cache1 = affine_relu_forward(X, W1, b1)
+        scores, cache2 = affine_forward(mid, W2, b2)
+        
+        
+        
+        
 
         pass
 
@@ -120,7 +138,17 @@ class TwoLayerNet(object):
         # of 0.5 to simplify the expression for the gradient.                      #
         ############################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+        
+        loss, dsvm = softmax_loss(scores, y)
+        loss = loss + 0.5 * self.reg * (np.sum( W1 ** 2)) + 0.5 * self.reg * (np.sum(W2 ** 2))    
+        
+        dx, grads['W2'],grads['b2'] = affine_backward(dsvm, cache2)
+        cout, grads['W1'],grads['b1']=affine_relu_backward(dx, cache1)
+        
+        grads['W2'] += self.reg*W2
+        grads['W1'] += self.reg*W1
 
+        
         pass
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
